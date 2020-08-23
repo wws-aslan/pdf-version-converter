@@ -1,13 +1,5 @@
 <?php
 
-/*
- * This file is part of the PDF Version Converter.
- *
- * (c) Thiago Rodrigues <xthiago@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
 namespace Xthiago\PDFVersionConverter\Guesser;
 
 use \RuntimeException;
@@ -20,14 +12,17 @@ use \RuntimeException;
 class RegexGuesser implements GuesserInterface
 {
     /**
-     * {@inheritdoc }
+     * @param string $file
+     *
+     * @return string
      */
-    public function guess($file)
+    public function guess($file): string
     {
         $version = $this->guessVersion($file);
 
-        if ($version === null)
+        if ($version === null) {
             throw new RuntimeException("Can't guess version. The file '{$file}' is a PDF file?");
+        }
 
         return $version;
     }
@@ -35,7 +30,9 @@ class RegexGuesser implements GuesserInterface
     /**
      * This implementation is not the best, but doesn't require external modules or libs. For now, works fine for me.
      * Inspired by Sameer Borate's snippet http://www.codediesel.com/php/read-the-version-of-a-pdf-in-php/
+     *
      * @param $filename
+     *
      * @return string|null
      */
     protected function guessVersion($filename)
@@ -50,12 +47,13 @@ class RegexGuesser implements GuesserInterface
         fseek($fp, 0);
 
         /* Read 1024 bytes from the start of the PDF */
-        preg_match('/%PDF-(\d\.\d)/', fread($fp,1024), $match);
+        preg_match('/%PDF-(\d\.\d)/', fread($fp, 1024), $match);
 
         fclose($fp);
 
-        if (isset($match[1]))
+        if (isset($match[1])) {
             return $match[1];
+        }
 
         return null;
     }

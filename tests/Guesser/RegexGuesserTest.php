@@ -8,16 +8,18 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace Xthiago\PDFVersionConverter\Guesser;
 
-use \PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
+use RuntimeException;
 
 /**
  * @author Thiago Rodrigues <xthiago@gmail.com>
  */
-class RegexGuesserTest extends PHPUnit_Framework_TestCase
+class RegexGuesserTest extends TestCase
 {
-    protected static $files = array(
+    protected static $files = [
         'text',
         'image.png',
         'v1.0.pdf',
@@ -29,29 +31,31 @@ class RegexGuesserTest extends PHPUnit_Framework_TestCase
         'v1.6.pdf',
         'v1.7.pdf',
         'v2.0.pdf',
-    );
+    ];
 
     protected $tmpDir;
 
     protected $stageDir;
 
-    protected function setUp()
+    protected function setUp(): void
     {
-        $this->tmpDir = __DIR__.'/../files/repo/';
-        $this->stageDir = __DIR__.'/../files/stage/';
+        $this->tmpDir = __DIR__ . '/../files/repo/';
+        $this->stageDir = __DIR__ . '/../files/stage/';
 
-        if (!file_exists($this->stageDir))
+        if (!file_exists($this->stageDir)) {
             mkdir($this->stageDir);
+        }
 
-        foreach(self::$files as $file) {
-            if (!copy($this->tmpDir . $file, $this->stageDir . $file))
+        foreach (self::$files as $file) {
+            if (!copy($this->tmpDir . $file, $this->stageDir . $file)) {
                 throw new \RuntimeException("Can't create test file.");
+            }
         }
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
-        foreach(self::$files as $file) {
+        foreach (self::$files as $file) {
             unlink($this->stageDir . $file);
         }
     }
@@ -74,10 +78,10 @@ class RegexGuesserTest extends PHPUnit_Framework_TestCase
      * @param string $file
      *
      * @dataProvider invalidFilesProvider
-     * @expectedException RuntimeException
      */
     public function testMustThrowException($file)
     {
+        $this->expectException(RuntimeException::class);
         $guesser = new RegexGuesser();
         $version = $guesser->guess($file);
     }
@@ -87,18 +91,18 @@ class RegexGuesserTest extends PHPUnit_Framework_TestCase
      */
     public static function filesProvider()
     {
-        return array(
+        return [
             // file, current version
             //array(__DIR__ . '/../files/stage/v1.0.pdf', '1.0'),
-            array(__DIR__ . '/../files/stage/v1.1.pdf', '1.1'),
-            array(__DIR__ . '/../files/stage/v1.2.pdf', '1.2'),
-            array(__DIR__ . '/../files/stage/v1.3.pdf', '1.3'),
-            array(__DIR__ . '/../files/stage/v1.4.pdf', '1.4'),
-            array(__DIR__ . '/../files/stage/v1.5.pdf', '1.5'),
-            array(__DIR__ . '/../files/stage/v1.6.pdf', '1.6'),
-            array(__DIR__ . '/../files/stage/v1.7.pdf', '1.7'),
+            [__DIR__ . '/../files/stage/v1.1.pdf', '1.1'],
+            [__DIR__ . '/../files/stage/v1.2.pdf', '1.2'],
+            [__DIR__ . '/../files/stage/v1.3.pdf', '1.3'],
+            [__DIR__ . '/../files/stage/v1.4.pdf', '1.4'],
+            [__DIR__ . '/../files/stage/v1.5.pdf', '1.5'],
+            [__DIR__ . '/../files/stage/v1.6.pdf', '1.6'],
+            [__DIR__ . '/../files/stage/v1.7.pdf', '1.7'],
             //array(__DIR__ . '/../files/stage/v2.0.pdf', '2.0'),
-        );
+        ];
     }
 
     /**
@@ -106,12 +110,12 @@ class RegexGuesserTest extends PHPUnit_Framework_TestCase
      */
     public static function invalidFilesProvider()
     {
-        $stageDir = __DIR__.'/../files/stage/';
+        $stageDir = __DIR__ . '/../files/stage/';
 
-        return array(
+        return [
             // file
-            array($stageDir . 'text'),
-            array($stageDir . 'image.png'),
-        );
+            [$stageDir . 'text'],
+            [$stageDir . 'image.png'],
+        ];
     }
 }

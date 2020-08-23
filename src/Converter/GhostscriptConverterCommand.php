@@ -1,13 +1,5 @@
 <?php
 
-/*
- * This file is part of the PDF Version Converter.
- *
- * (c) Thiago Rodrigues <xthiago@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
 namespace Xthiago\PDFVersionConverter\Converter;
 
 use Symfony\Component\Process\Process;
@@ -19,18 +11,16 @@ use Symfony\Component\Process\Process;
  */
 class GhostscriptConverterCommand
 {
-    /**
-     * @var Filesystem
-     */
     protected $baseCommand = 'gs -sDEVICE=pdfwrite -dCompatibilityLevel=%s -dPDFSETTINGS=/screen -dNOPAUSE -dQUIET -dBATCH -dColorConversionStrategy=/LeaveColorUnchanged -dEncodeColorImages=false -dEncodeGrayImages=false -dEncodeMonoImages=false -dDownsampleMonoImages=false -dDownsampleGrayImages=false -dDownsampleColorImages=false -dAutoFilterColorImages=false -dAutoFilterGrayImages=false -dColorImageFilter=/FlateEncode -dGrayImageFilter=/FlateEncode  -sOutputFile=%s %s';
 
-    public function __construct()
+    /**
+     * @param $original_file
+     * @param $new_file
+     * @param $new_version
+     */
+    public function run($original_file, $new_file, $new_version): void
     {
-    }
-
-    public function run($originalFile, $newFile, $newVersion)
-    {
-        $command = sprintf($this->baseCommand, $newVersion, $newFile, escapeshellarg($originalFile));
+        $command = $this->getBaseCommand($new_version, $new_file, escapeshellarg($original_file));
 
         $process = new Process($command);
         $process->run();
@@ -38,5 +28,30 @@ class GhostscriptConverterCommand
         if (!$process->isSuccessful()) {
             throw new \RuntimeException($process->getErrorOutput());
         }
+    }
+
+    protected function getBaseCommand($new_version, $new_file, $original_file)
+    {
+        return [
+            'gs',
+            '-sDEVICE=pdfwrite',
+            '-dCompatibilityLevel=' . $new_version,
+            '-dPDFSETTINGS=/screen',
+            '-dNOPAUSE',
+            '-dQUIET',
+            '-dBATCH',
+            '-dColorConversionStrategy=/LeaveColorUnchanged',
+            '-dEncodeColorImages=false',
+            '-dEncodeGrayImages=false', '
+            -dEncodeMonoImages=false',
+            '-dDownsampleMonoImages=false',
+            '-dDownsampleGrayImages=false',
+            '-dDownsampleColorImages=false',
+            '-dAutoFilterColorImages=false',
+            '-dAutoFilterGrayImages=false',
+            '-dColorImageFilter=/FlateEncode',
+            '-dGrayImageFilter=/FlateEncode',
+            '-sOutputFile='. $new_file
+        ];
     }
 }

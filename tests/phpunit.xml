@@ -8,7 +8,7 @@
          convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
          processIsolation="false"
-         stopOnFailure="true"
+         stopOnFailure="false"
          verbose="true"
          bootstrap="../vendor/autoload.php">
     <testsuites>
@@ -19,11 +19,5 @@
             <exclude>vendor</exclude>
         </testsuite>
     </testsuites>
-    
-    <filter>
-        <blacklist>
-            <directory suffix=".php">../vendor</directory>
-        </blacklist>
-    </filter>
 </phpunit>
 
