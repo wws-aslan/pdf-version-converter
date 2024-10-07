@@ -4,3 +4,6 @@ vendor/*
 tests/files/stage/*
 tests/files/tmp/*
 tests/.phpunit.result.cache
+.idea/
+docker
+docker-compose.yml
